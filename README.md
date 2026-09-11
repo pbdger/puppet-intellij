@@ -1,4 +1,4 @@
-# Puppet IntelliJ Plugin 1.0.2
+# Puppet IntelliJ Plugin 1.0.3
 
 Target: IntelliJ IDEA **2025.1–2025.3** (`251`–`253.*`), Java 21.
 
@@ -72,7 +72,28 @@ Select the ZIP produced in `build/distributions/`.
 
 ## Current verification status
 
-The project has been statically checked against the current JetBrains IntelliJ Platform Plugin SDK documentation for the IntelliJ 2025 LSP API and Gradle plugin configuration. The execution environment used to prepare this source snapshot cannot resolve external Gradle/JetBrains artifacts, so a local `buildPlugin`/Plugin Verifier run could not be completed here.
+The 1.0.3 production sources compile against IntelliJ IDEA Ultimate 2025.1.
+`verifyPluginProjectConfiguration`, `buildPlugin`, and `verifyPluginStructure`
+complete successfully. The existing six-test suite compiles; two lexer tests pass,
+while four pre-existing parser/index fixture tests still fail and require separate
+follow-up work. A full multi-IDE Plugin Verifier run has not been claimed for this
+source snapshot.
+
+## 1.0.3 Structure View compatibility
+
+This patch release fixes the IntelliJ 2025 compile errors in
+`PuppetStructureViewFactory`:
+
+- imports `PsiStructureViewFactory` from `com.intellij.lang`;
+- navigates a structure symbol only when its PSI element implements `Navigatable`;
+- derives `canNavigate()` and `canNavigateToSource()` from that navigatable PSI
+  element instead of claiming unconditional support;
+- registers the implementation with `lang.psiStructureViewFactory`.
+- declares JUnit 4 explicitly for the existing `TestCase` and
+  `BasePlatformTestCase` test suite.
+
+These changes address the Structure View compile failures reported by the first
+real IntelliJ 2025 CI test run.
 
 ## 0.5.0 additions
 

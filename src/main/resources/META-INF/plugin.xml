@@ -24,7 +24,7 @@
         <lang.parserDefinition language="Puppet" implementationClass="de.consoluta.puppet.language.PuppetParserDefinition"/>
         <fileBasedIndex implementation="de.consoluta.puppet.index.PuppetDeclarationFileIndex"/>
         <psi.referenceContributor language="Puppet" implementation="de.consoluta.puppet.navigation.PuppetReferenceContributor"/>
-        <lang.structureViewBuilder language="Puppet" implementationClass="de.consoluta.puppet.structure.PuppetStructureViewFactory"/>
+        <lang.psiStructureViewFactory language="Puppet" implementationClass="de.consoluta.puppet.structure.PuppetStructureViewFactory"/>
         <lang.syntaxHighlighterFactory language="Puppet"
                 implementationClass="de.consoluta.puppet.language.PuppetSyntaxHighlighterFactory"/>
         <platform.lsp.serverSupportProvider

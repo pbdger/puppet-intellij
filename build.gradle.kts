@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "de.consoluta.puppet"
-version = "1.0.2"
+version = "1.0.3"
 
 repositories {
     mavenCentral()
@@ -21,6 +21,7 @@ dependencies {
         intellijIdeaUltimate("2025.1")
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
     }
+    testImplementation("junit:junit:4.13.2")
 }
 
 java {
@@ -45,13 +46,12 @@ intellijPlatform {
         """.trimIndent()
 
         changeNotes = """
-            <h3>1.0.2</h3>
+            <h3>1.0.3</h3>
             <ul>
-              <li>Adds puppet parser validate and puppet-lint actions for the current manifest.</li>
-              <li>Adds Puppet, PDK, puppet-lint and language-server version reporting.</li>
-              <li>Adds optional modulepath and environmentpath settings.</li>
-              <li>Adds file-based LSP debug logging and richer IDE log diagnostics.</li>
-              <li>Adds Puppet actions to editor and Project view context menus.</li>
+              <li>Uses the IntelliJ 2025 PsiStructureViewFactory API from com.intellij.lang.</li>
+              <li>Navigates structure symbols safely through the Navigatable interface.</li>
+              <li>Registers the Structure View with the matching psiStructureViewFactory extension point.</li>
+              <li>Adds the JUnit 4 test dependency required by the existing fixture tests.</li>
             </ul>
         """.trimIndent()
     }

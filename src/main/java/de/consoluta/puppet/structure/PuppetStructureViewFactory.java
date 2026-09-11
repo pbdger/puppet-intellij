@@ -2,8 +2,10 @@ package de.consoluta.puppet.structure;
 
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
+import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -72,10 +74,18 @@ public final class PuppetStructureViewFactory implements PsiStructureViewFactory
         @Override public Object getValue() { return file.findElementAt(Math.min(offset, Math.max(0, file.getTextLength()-1))); }
         @Override public void navigate(boolean requestFocus) {
             PsiElement e = file.findElementAt(offset);
-            if (e != null) e.navigate(requestFocus);
+            if (e instanceof Navigatable navigatable && navigatable.canNavigate()) {
+                navigatable.navigate(requestFocus);
+            }
         }
-        @Override public boolean canNavigate() { return true; }
-        @Override public boolean canNavigateToSource() { return true; }
+        @Override public boolean canNavigate() {
+            PsiElement e = file.findElementAt(offset);
+            return e instanceof Navigatable navigatable && navigatable.canNavigate();
+        }
+        @Override public boolean canNavigateToSource() {
+            PsiElement e = file.findElementAt(offset);
+            return e instanceof Navigatable navigatable && navigatable.canNavigateToSource();
+        }
         @Override public StructureViewTreeElement @NotNull [] getChildren() { return new StructureViewTreeElement[0]; }
         @Override public @NotNull ItemPresentation getPresentation() {
             return new ItemPresentation() {
