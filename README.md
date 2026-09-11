@@ -96,6 +96,9 @@ This patch release fixes the IntelliJ 2025 compile errors in
   from loading in fixture tests.
 - declares `language="Puppet"` on the custom file type, as required for consistent
   language/file-type registration in the IntelliJ 2025 test runtime.
+- uses the verifier-compliant plugin ID `de.fovea.puppet` and moves all Java
+  packages from `de.consoluta.puppet` to `de.fovea.puppet`;
+- identifies the plugin vendor as Fovea.
 
 These changes address the Structure View compile failures reported by the first
 real IntelliJ 2025 CI test run.

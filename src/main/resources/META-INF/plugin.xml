@@ -1,7 +1,7 @@
 <idea-plugin>
-    <id>de.consoluta.puppet.intellij</id>
+    <id>de.fovea.puppet</id>
     <name>Puppet</name>
-    <vendor>Consoluta</vendor>
+    <vendor>Fovea</vendor>
 
     <description><![CDATA[
         Puppet language support for IntelliJ IDEA 2025 using Puppet Editor Services.
@@ -13,25 +13,25 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Puppet"
                   language="Puppet"
-                  implementationClass="de.consoluta.puppet.language.PuppetFileType"
+                  implementationClass="de.fovea.puppet.language.PuppetFileType"
                   fieldName="INSTANCE"
                   extensions="pp;epp"
                   fileNames="Puppetfile"/>
-        <externalAnnotator language="Puppet" implementationClass="de.consoluta.puppet.diagnostics.PuppetExternalAnnotator"/>
-        <completion.contributor language="Puppet" implementationClass="de.consoluta.puppet.completion.PuppetCompletionContributor"/>
-        <lang.findUsagesProvider language="Puppet" implementationClass="de.consoluta.puppet.navigation.PuppetFindUsagesProvider"/>
-        <renamePsiElementProcessor implementation="de.consoluta.puppet.navigation.PuppetRenameProcessor"/>
-        <lang.parserDefinition language="Puppet" implementationClass="de.consoluta.puppet.language.PuppetParserDefinition"/>
-        <fileBasedIndex implementation="de.consoluta.puppet.index.PuppetDeclarationFileIndex"/>
-        <psi.referenceContributor language="Puppet" implementation="de.consoluta.puppet.navigation.PuppetReferenceContributor"/>
-        <lang.psiStructureViewFactory language="Puppet" implementationClass="de.consoluta.puppet.structure.PuppetStructureViewFactory"/>
+        <externalAnnotator language="Puppet" implementationClass="de.fovea.puppet.diagnostics.PuppetExternalAnnotator"/>
+        <completion.contributor language="Puppet" implementationClass="de.fovea.puppet.completion.PuppetCompletionContributor"/>
+        <lang.findUsagesProvider language="Puppet" implementationClass="de.fovea.puppet.navigation.PuppetFindUsagesProvider"/>
+        <renamePsiElementProcessor implementation="de.fovea.puppet.navigation.PuppetRenameProcessor"/>
+        <lang.parserDefinition language="Puppet" implementationClass="de.fovea.puppet.language.PuppetParserDefinition"/>
+        <fileBasedIndex implementation="de.fovea.puppet.index.PuppetDeclarationFileIndex"/>
+        <psi.referenceContributor language="Puppet" implementation="de.fovea.puppet.navigation.PuppetReferenceContributor"/>
+        <lang.psiStructureViewFactory language="Puppet" implementationClass="de.fovea.puppet.structure.PuppetStructureViewFactory"/>
         <lang.syntaxHighlighterFactory language="Puppet"
-                implementationClass="de.consoluta.puppet.language.PuppetSyntaxHighlighterFactory"/>
+                implementationClass="de.fovea.puppet.language.PuppetSyntaxHighlighterFactory"/>
         <platform.lsp.serverSupportProvider
-                implementation="de.consoluta.puppet.lsp.PuppetLspServerSupportProvider"/>
+                implementation="de.fovea.puppet.lsp.PuppetLspServerSupportProvider"/>
         <applicationConfigurable parentId="tools"
-                instance="de.consoluta.puppet.settings.PuppetSettingsConfigurable"
-                id="de.consoluta.puppet.settings" displayName="Puppet"/>
+                instance="de.fovea.puppet.settings.PuppetSettingsConfigurable"
+                id="de.fovea.puppet.settings" displayName="Puppet"/>
     </extensions>
 
     <actions>
@@ -40,31 +40,31 @@
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
 
-            <action id="Puppet.GoToClass" class="de.consoluta.puppet.navigation.PuppetClassNavigationAction"
+            <action id="Puppet.GoToClass" class="de.fovea.puppet.navigation.PuppetClassNavigationAction"
                     text="Go to Puppet Class..." description="Find a Puppet class or defined type in the project"/>
-            <action id="Puppet.ModuleInfo" class="de.consoluta.puppet.navigation.PuppetModuleInfoAction"
+            <action id="Puppet.ModuleInfo" class="de.fovea.puppet.navigation.PuppetModuleInfoAction"
                     text="Show Puppet Module" description="Show the detected Puppet module root and areas"/>
             <separator/>
-            <action id="Puppet.ParserValidate" class="de.consoluta.puppet.actions.PuppetParserValidateAction"
+            <action id="Puppet.ParserValidate" class="de.fovea.puppet.actions.PuppetParserValidateAction"
                     text="Parser Validate Current Manifest" description="Run puppet parser validate for the selected manifest"/>
-            <action id="Puppet.Lint" class="de.consoluta.puppet.actions.PuppetLintAction"
+            <action id="Puppet.Lint" class="de.fovea.puppet.actions.PuppetLintAction"
                     text="Lint Current Manifest" description="Run puppet-lint for the selected manifest"/>
             <separator/>
-            <action id="Puppet.PdkValidate" class="de.consoluta.puppet.actions.PdkValidateAction"
+            <action id="Puppet.PdkValidate" class="de.fovea.puppet.actions.PdkValidateAction"
                     text="PDK Validate" description="Run pdk validate in the current Puppet module"/>
-            <action id="Puppet.PdkUnitTest" class="de.consoluta.puppet.actions.PdkUnitTestAction"
+            <action id="Puppet.PdkUnitTest" class="de.fovea.puppet.actions.PdkUnitTestAction"
                     text="PDK Unit Test" description="Run pdk test unit in the current Puppet module"/>
             <separator/>
-            <action id="Puppet.PdkNewClass" class="de.consoluta.puppet.actions.PdkNewClassAction"
+            <action id="Puppet.PdkNewClass" class="de.fovea.puppet.actions.PdkNewClassAction"
                     text="PDK New Class..." description="Create a Puppet class using PDK"/>
-            <action id="Puppet.PdkNewDefinedType" class="de.consoluta.puppet.actions.PdkNewDefinedTypeAction"
+            <action id="Puppet.PdkNewDefinedType" class="de.fovea.puppet.actions.PdkNewDefinedTypeAction"
                     text="PDK New Defined Type..." description="Create a Puppet defined type using PDK"/>
             <separator/>
-            <action id="Puppet.Versions" class="de.consoluta.puppet.actions.PuppetVersionsAction"
+            <action id="Puppet.Versions" class="de.fovea.puppet.actions.PuppetVersionsAction"
                     text="Show Tool Versions" description="Show detected Puppet, PDK, puppet-lint and language server versions"/>
-            <action id="Puppet.LspStatus" class="de.consoluta.puppet.actions.PuppetLspStatusAction"
+            <action id="Puppet.LspStatus" class="de.fovea.puppet.actions.PuppetLspStatusAction"
                     text="Language Server Status" description="Show Puppet language server status"/>
-            <action id="Puppet.LspRestart" class="de.consoluta.puppet.actions.PuppetLspRestartAction"
+            <action id="Puppet.LspRestart" class="de.fovea.puppet.actions.PuppetLspRestartAction"
                     text="Restart Language Server" description="Restart Puppet language server"/>
         </group>
     </actions>

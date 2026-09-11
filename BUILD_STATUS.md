@@ -30,9 +30,10 @@ The IntelliJ 2025 Structure View compile errors reported by CI have been correct
 - the file type explicitly declares `language="Puppet"` for IntelliJ 2025.
 
 Static project, XML, registered-class and archive checks pass for this source
-snapshot. Gradle also reports two non-fatal configuration warnings: the intentional
-`untilBuild = "253.*"` compatibility cap and the existing plugin ID containing the
-word `intellij`.
+snapshot. The invalid earlier plugin ID reported by Plugin Verifier was replaced
+with `de.fovea.puppet`, and the Java package namespace is now consistently
+`de.fovea.puppet`. Gradle still reports the intentional `untilBuild = "253.*"`
+compatibility-cap recommendation.
 
 
 1.0.2 adds a PsiReferenceContributor and shared declaration resolver. Full Gradle/IDE SDK compilation still requires an online JetBrains dependency environment.

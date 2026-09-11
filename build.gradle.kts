@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.18.1"
 }
 
-group = "de.consoluta.puppet"
+group = "de.fovea.puppet"
 version = "1.0.3"
 
 repositories {
@@ -54,6 +54,8 @@ intellijPlatform {
               <li>Adds the JUnit 4 test dependency required by the existing fixture tests.</li>
               <li>Removes the unavailable com.intellij.modules.lsp dependency for IntelliJ 2025.</li>
               <li>Declares the Puppet language explicitly on the custom file type.</li>
+              <li>Uses a Plugin Verifier-compliant plugin ID without reserved template words.</li>
+              <li>Moves the plugin and Java namespace from de.consoluta.puppet to de.fovea.puppet.</li>
             </ul>
         """.trimIndent()
     }
