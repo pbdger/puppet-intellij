@@ -56,6 +56,7 @@ intellijPlatform {
               <li>Declares the Puppet language explicitly on the custom file type.</li>
               <li>Uses a Plugin Verifier-compliant plugin ID without reserved template words.</li>
               <li>Moves the plugin and Java namespace from de.consoluta.puppet to de.fovea.puppet.</li>
+              <li>Updates GitHub Actions to Node.js 24-compatible releases.</li>
             </ul>
         """.trimIndent()
     }

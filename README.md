@@ -58,7 +58,10 @@ The installable plugin ZIP is produced below:
 build/distributions/
 ```
 
-The repository also includes `.github/workflows/build.yml`, which builds and verifies the plugin and uploads the installable ZIP as a CI artifact.
+The repository also includes `.github/workflows/build.yml`, which builds and verifies
+the plugin and uploads the installable ZIP as a CI artifact. Its action versions use
+the Node.js 24 runtime (`checkout@v6`, `setup-java@v5`, `setup-gradle@v5`, and
+`upload-artifact@v6`).
 
 ## Install
 

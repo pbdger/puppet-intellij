@@ -35,6 +35,10 @@ with `de.fovea.puppet`, and the Java package namespace is now consistently
 `de.fovea.puppet`. Gradle still reports the intentional `untilBuild = "253.*"`
 compatibility-cap recommendation.
 
+The GitHub Actions workflow uses Node.js 24-compatible action releases:
+`actions/checkout@v6`, `actions/setup-java@v5`,
+`gradle/actions/setup-gradle@v5`, and `actions/upload-artifact@v6`.
+
 
 1.0.2 adds a PsiReferenceContributor and shared declaration resolver. Full Gradle/IDE SDK compilation still requires an online JetBrains dependency environment.
 
