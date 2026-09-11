@@ -9,7 +9,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import de.fovea.puppet.settings.PuppetSettingsState;
-import de.fovea.puppet.tools.PuppetToolResolver;
+import de.fovea.puppet.runtime.PuppetCommand;
+import de.fovea.puppet.runtime.PuppetRuntimeResolver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,18 +21,20 @@ public final class PuppetVersionsAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getProject();
         var settings = ApplicationManager.getApplication().getService(PuppetSettingsState.class).data();
+        var runtime = PuppetRuntimeResolver.resolve(settings);
         List<String> lines = new ArrayList<>();
-        lines.add(version("Puppet", PuppetToolResolver.puppet(settings), "--version"));
-        lines.add(version("PDK", PuppetToolResolver.pdk(settings), "--version"));
-        lines.add(version("puppet-lint", PuppetToolResolver.puppetLint(settings), "--version"));
-        lines.add(version("Language server", PuppetToolResolver.languageServer(settings), "--version"));
+        lines.add("Runtime: " + (runtime == null ? "not found" : runtime.description()));
+        lines.add(version("Puppet", runtime == null ? null : runtime.puppet(), "--version"));
+        lines.add(version("PDK", runtime == null ? null : runtime.pdk(), "--version"));
+        lines.add(version("puppet-lint", runtime == null ? null : runtime.puppetLint(), "--version"));
+        lines.add(version("Language server", runtime == null ? null : runtime.languageServer(), "--version"));
         Messages.showInfoMessage(project, String.join("\n", lines), "Puppet Tool Versions");
     }
 
-    private static String version(String label, String executable, String argument) {
+    private static String version(String label, PuppetCommand executable, String argument) {
         if (executable == null) return label + ": not found";
         try {
-            ProcessOutput output = new CapturingProcessHandler(new GeneralCommandLine(executable, argument))
+            ProcessOutput output = new CapturingProcessHandler(executable.commandLine(List.of(argument), null))
                     .runProcess(5000);
             String text = output.getStdout().trim();
             if (text.isEmpty()) text = output.getStderr().trim();

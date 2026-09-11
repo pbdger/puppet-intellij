@@ -32,6 +32,9 @@
         <applicationConfigurable parentId="tools"
                 instance="de.fovea.puppet.settings.PuppetSettingsConfigurable"
                 id="de.fovea.puppet.settings" displayName="Puppet"/>
+        <toolWindow id="Puppet" anchor="bottom"
+                factoryClass="de.fovea.puppet.actions.PuppetToolWindowFactory"
+                canCloseContents="true"/>
     </extensions>
 
     <actions>

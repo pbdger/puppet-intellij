@@ -8,7 +8,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import de.fovea.puppet.project.PuppetProjectUtil;
 import de.fovea.puppet.settings.PuppetSettingsState;
-import de.fovea.puppet.tools.PuppetToolResolver;
+import de.fovea.puppet.runtime.PuppetRuntimeResolver;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -23,10 +23,10 @@ public final class PuppetParserValidateAction extends AbstractPuppetToolAction {
         if (project == null || file == null || !isManifest(file)) return;
 
         var settings = ApplicationManager.getApplication().getService(PuppetSettingsState.class).data();
-        String puppet = PuppetToolResolver.puppet(settings);
-        if (puppet == null) {
+        var runtime = PuppetRuntimeResolver.resolve(settings);
+        if (runtime == null || runtime.puppet() == null) {
             Messages.showErrorDialog(project,
-                    "Puppet was not found. Configure it under Settings | Tools | Puppet, or add puppet to PATH.",
+                    "No Puppet command is available in the selected runtime. Check Settings | Tools | Puppet.",
                     "Puppet Parser Validate");
             return;
         }
@@ -36,7 +36,7 @@ public final class PuppetParserValidateAction extends AbstractPuppetToolAction {
         List<String> args = new ArrayList<>(List.of("parser", "validate"));
         PuppetProjectUtil.addPuppetPathArguments(args, settings);
         args.add(file.getPath());
-        runCommand(project, puppet, args, workDir, "Parser Validate");
+        runCommand(project, runtime.puppet(), args, workDir, "Parser Validate");
     }
 
     @Override

@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 @State(name = "PuppetSettings", storages = @Storage("puppet.xml"))
 public final class PuppetSettingsState implements PersistentStateComponent<PuppetSettingsState.StateData> {
     public static final class StateData {
+        public String runtimeType = "AUTO";
+        public String installationDirectory = "auto";
         public String rubyExecutable = "auto";
         public String languageServerPath = "auto";
         public String pdkExecutable = "auto";

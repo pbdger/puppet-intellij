@@ -8,7 +8,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import de.fovea.puppet.project.PuppetProjectUtil;
 import de.fovea.puppet.settings.PuppetSettingsState;
-import de.fovea.puppet.tools.PuppetToolResolver;
+import de.fovea.puppet.runtime.PuppetRuntimeResolver;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -22,17 +22,17 @@ public final class PuppetLintAction extends AbstractPuppetToolAction {
         if (project == null || file == null || !isManifest(file)) return;
 
         var settings = ApplicationManager.getApplication().getService(PuppetSettingsState.class).data();
-        String lint = PuppetToolResolver.puppetLint(settings);
-        if (lint == null) {
+        var runtime = PuppetRuntimeResolver.resolve(settings);
+        if (runtime == null || runtime.puppetLint() == null) {
             Messages.showErrorDialog(project,
-                    "puppet-lint was not found. Configure it under Settings | Tools | Puppet, or add puppet-lint to PATH.",
+                    "No puppet-lint command is available in the selected runtime. Check Settings | Tools | Puppet.",
                     "Puppet Lint");
             return;
         }
 
         Path workDir = PuppetProjectUtil.findModuleRoot(project, file);
         if (workDir == null) return;
-        runCommand(project, lint, List.of(file.getPath()), workDir, "Puppet Lint");
+        runCommand(project, runtime.puppetLint(), List.of(file.getPath()), workDir, "Puppet Lint");
     }
 
     @Override

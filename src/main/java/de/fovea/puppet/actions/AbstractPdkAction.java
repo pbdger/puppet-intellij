@@ -13,11 +13,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import de.fovea.puppet.project.PuppetProjectUtil;
 import de.fovea.puppet.settings.PuppetSettingsState;
-import de.fovea.puppet.tools.PuppetToolResolver;
+import de.fovea.puppet.runtime.PuppetRuntimeResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,8 +42,8 @@ abstract class AbstractPdkAction extends AnAction {
                                 @NotNull String[] args,
                                 @NotNull String title) {
         var settings = ApplicationManager.getApplication().getService(PuppetSettingsState.class).data();
-        String pdk = PuppetToolResolver.pdk(settings);
-        if (pdk == null) {
+        var runtime = PuppetRuntimeResolver.resolve(settings);
+        if (runtime == null || runtime.pdk() == null) {
             Messages.showErrorDialog(project,
                     "PDK was not found. Configure it under Settings | Tools | Puppet, or add pdk to PATH.", title);
             return;
@@ -56,10 +55,7 @@ abstract class AbstractPdkAction extends AnAction {
             return;
         }
 
-        var command = new GeneralCommandLine();
-        command.setExePath(pdk);
-        command.addParameters(args);
-        command.setWorkDirectory(workDirectory.toFile());
+        var command = runtime.pdk().commandLine(java.util.List.of(args), workDirectory);
 
         try {
             OSProcessHandler handler = new OSProcessHandler(command);
@@ -68,12 +64,11 @@ abstract class AbstractPdkAction extends AnAction {
             console.print("Working directory: " + workDirectory + "\n", com.intellij.execution.ui.ConsoleViewContentType.SYSTEM_OUTPUT);
             console.print("Command: " + command.getCommandLineString() + "\n\n", com.intellij.execution.ui.ConsoleViewContentType.SYSTEM_OUTPUT);
 
-            String id = "Puppet PDK";
+            String id = "Puppet";
             ToolWindowManager manager = ToolWindowManager.getInstance(project);
             ToolWindow toolWindow = manager.getToolWindow(id);
             if (toolWindow == null) {
-                // Compatibility overload available throughout the IntelliJ 2025 line.
-                toolWindow = manager.registerToolWindow(id, true, ToolWindowAnchor.BOTTOM);
+                throw new ExecutionException("The Puppet tool window is not registered.");
             }
             toolWindow.getContentManager().removeAllContents(true);
             var content = toolWindow.getContentManager().getFactory().createContent(console.getComponent(), title, false);

@@ -13,7 +13,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import de.fovea.puppet.project.PuppetProjectUtil;
 import de.fovea.puppet.settings.PuppetSettingsState;
-import de.fovea.puppet.tools.PuppetToolResolver;
+import de.fovea.puppet.runtime.PuppetCommand;
+import de.fovea.puppet.runtime.PuppetRuntimeResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +44,10 @@ public final class PuppetExternalAnnotator extends ExternalAnnotator<PuppetExter
         var settings = ApplicationManager.getApplication().getService(PuppetSettingsState.class).data();
         List<PuppetDiagnostic> result = new ArrayList<>();
 
-        String puppet = PuppetToolResolver.puppet(settings);
+        var runtime = PuppetRuntimeResolver.resolve(settings);
+        if (runtime == null) return result;
+
+        PuppetCommand puppet = runtime.puppet();
         if (puppet != null) {
             List<String> args = new ArrayList<>(List.of("parser", "validate"));
             PuppetProjectUtil.addPuppetPathArguments(args, settings);
@@ -52,7 +56,7 @@ public final class PuppetExternalAnnotator extends ExternalAnnotator<PuppetExter
             if (out != null && out.getExitCode() != 0) parsePuppet(out.getStderr() + "\n" + out.getStdout(), result);
         }
 
-        String lint = PuppetToolResolver.puppetLint(settings);
+        PuppetCommand lint = runtime.puppetLint();
         if (lint != null) {
             ProcessOutput out = run(lint, List.of("--no-autoloader_layout-check", input.file().getPath()), input.workDir());
             if (out != null) parseLint(out.getStdout() + "\n" + out.getStderr(), result);
@@ -60,12 +64,9 @@ public final class PuppetExternalAnnotator extends ExternalAnnotator<PuppetExter
         return result;
     }
 
-    private static @Nullable ProcessOutput run(String executable, List<String> args, Path workDir) {
+    private static @Nullable ProcessOutput run(PuppetCommand executable, List<String> args, Path workDir) {
         try {
-            GeneralCommandLine command = new GeneralCommandLine();
-            command.setExePath(executable);
-            command.addParameters(args);
-            command.setWorkDirectory(workDir.toFile());
+            GeneralCommandLine command = executable.commandLine(args, workDir);
             return new CapturingProcessHandler(command).runProcess(15_000);
         } catch (Exception ignored) {
             return null;

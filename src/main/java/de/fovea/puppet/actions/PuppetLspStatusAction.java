@@ -8,7 +8,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.platform.lsp.api.LspServerManager;
 import de.fovea.puppet.lsp.PuppetLspServerSupportProvider;
 import de.fovea.puppet.settings.PuppetSettingsState;
-import de.fovea.puppet.tools.PuppetToolResolver;
+import de.fovea.puppet.runtime.PuppetRuntimeResolver;
 import org.jetbrains.annotations.NotNull;
 
 public final class PuppetLspStatusAction extends AnAction {
@@ -17,10 +17,12 @@ public final class PuppetLspStatusAction extends AnAction {
         Project project = event.getProject();
         if (project == null) return;
         var settings = ApplicationManager.getApplication().getService(PuppetSettingsState.class).data();
-        String executable = PuppetToolResolver.languageServer(settings);
+        var runtime = PuppetRuntimeResolver.resolve(settings);
         int running = LspServerManager.getInstance(project)
                 .getServersForProvider(PuppetLspServerSupportProvider.class).size();
-        String message = "Language server: " + (executable == null ? "not found" : executable)
+        String message = "Runtime: " + (runtime == null ? "not found" : runtime.description())
+                + "\nLanguage server: " + (runtime == null || runtime.languageServer() == null
+                    ? "not found" : runtime.languageServer().display())
                 + "\nRunning Puppet LSP server(s): " + running;
         Messages.showInfoMessage(project, message, "Puppet Language Server");
     }

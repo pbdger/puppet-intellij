@@ -6,9 +6,10 @@ Target: IntelliJ IDEA **2025.1–2025.3** (`251`–`253.*`), Java 21.
 
 - Puppet `.pp` and `.epp` file type and syntax highlighting
 - `Puppetfile` association and Puppet LSP activation
-- Puppet Editor Services / `puppet-languageserver --stdio`
+- Bundled Puppet Editor Services 2.0.4 / `puppet-languageserver --stdio`
 - LSP completion, hover, diagnostics and navigation according to IntelliJ 2025 LSP capabilities
-- Automatic lookup of `puppet-languageserver`, PDK, Puppet and Ruby via `PATH` and common Puppet Labs paths
+- Central `PuppetRuntime` shared by LSP, Puppet, puppet-lint and PDK actions
+- Automatic PDK detection with Puppet Agent fallback via `PATH` and common Puppet Labs paths
 - Settings under **Settings | Tools | Puppet** with a **Detect tools** button
 - PDK Validate
 - PDK Unit Test
@@ -21,25 +22,38 @@ Target: IntelliJ IDEA **2025.1–2025.3** (`251`–`253.*`), Java 21.
 
 `metadata.json` and `hiera.yaml` deliberately keep IntelliJ's native JSON/YAML editors; the Puppet plugin does not hijack those file types.
 
-## Language server
+## Runtime and language server
 
-The plugin starts an executable `puppet-languageserver` directly. If a configured language-server path ends in `.rb`, the configured or auto-detected Ruby interpreter is used.
+The default `AUTO` runtime prefers PDK and falls back to Puppet Agent. Puppet Editor
+Services 2.0.4 is downloaded with a pinned SHA-256 checksum during the build and
+packaged inside the plugin; users do not need to install a separate language server.
 
-Example:
+With PDK, the plugin consistently starts all tools through the same environment:
 
 ```text
-puppet-languageserver --stdio --timeout=0 --local-workspace=/path/to/module
+pdk bundle exec ruby <bundled>/puppet-languageserver --stdio --timeout=0
+pdk bundle exec puppet ...
+pdk bundle exec puppet-lint ...
+```
+
+With Puppet Agent it uses the agent's Ruby and Puppet binaries:
+
+```text
+<agent>/bin/ruby <bundled>/puppet-languageserver --stdio --timeout=0
+<agent>/bin/puppet ...
 ```
 
 For a file inside a Puppet module, the nearest parent containing `metadata.json` is used as `--local-workspace`. Otherwise the IntelliJ project root is used.
+
+Settings provide `AUTO`, `PDK`, `PUPPET_AGENT`, and `CUSTOM` modes, an optional
+installation directory, and advanced per-executable overrides.
 
 ## Requirements
 
 - IntelliJ IDEA Ultimate / IntelliJ IDEA 2025.1–2025.3 with the JetBrains LSP API
 - JDK 21 for building the plugin
 - Gradle 9.0+ for IntelliJ Platform Gradle Plugin 2.18.1
-- Puppet Editor Services providing `puppet-languageserver`
-- PDK for PDK actions
+- PDK 3+ or Puppet Agent 7+ for Puppet semantics and the bundled language server
 
 ## Build
 
@@ -77,9 +91,21 @@ Select the ZIP produced in `build/distributions/`.
 
 The 1.0.3 production sources compile against IntelliJ IDEA Ultimate 2025.1.
 `verifyPluginProjectConfiguration`, `buildPlugin`, and `verifyPluginStructure`
-complete successfully. All six lexer, parser, and declaration-index tests pass in
-the IntelliJ test runtime. A full multi-IDE Plugin Verifier run has not been claimed
-for this source snapshot.
+complete successfully. All ten lexer, parser, declaration-index, and runtime tests
+pass in the IntelliJ test runtime. IntelliJ Plugin Verifier 1.410 reports the
+plugin as compatible with IntelliJ IDEA Ultimate 2025.1, 2025.2, and 2025.3,
+without deprecated, internal, or override-only API usages.
+
+## 1.0.3 unified runtime
+
+- `PuppetRuntimeResolver` chooses PDK before Puppet Agent in AUTO mode.
+- PDK-backed LSP, Puppet, and puppet-lint commands all use `pdk bundle exec`.
+- Puppet Agent-backed LSP uses the agent Ruby and Puppet installation.
+- Puppet Editor Services 2.0.4 is embedded in the plugin and extracted into the
+  IntelliJ system cache on first use.
+- The official release ZIP is pinned to SHA-256
+  `897ffe47974ca6414f8b66480b6bb86f8b133fc5d8230431a78d8895c28d1981`.
+- Explicit executable fields remain available as advanced overrides.
 
 ## 1.0.3 Structure View compatibility
 

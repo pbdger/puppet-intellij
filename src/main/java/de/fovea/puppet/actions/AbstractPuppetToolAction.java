@@ -10,23 +10,20 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import org.jetbrains.annotations.NotNull;
+import de.fovea.puppet.runtime.PuppetCommand;
 
 import java.nio.file.Path;
 import java.util.List;
 
 abstract class AbstractPuppetToolAction extends AnAction {
     protected final void runCommand(@NotNull Project project,
-                                    @NotNull String executable,
+                                    @NotNull PuppetCommand executable,
                                     @NotNull List<String> arguments,
                                     @NotNull Path workDirectory,
                                     @NotNull String title) {
-        var command = new GeneralCommandLine();
-        command.setExePath(executable);
-        command.addParameters(arguments);
-        command.setWorkDirectory(workDirectory.toFile());
+        var command = executable.commandLine(arguments, workDirectory);
 
         try {
             OSProcessHandler handler = new OSProcessHandler(command);
@@ -38,7 +35,7 @@ abstract class AbstractPuppetToolAction extends AnAction {
             ToolWindowManager manager = ToolWindowManager.getInstance(project);
             ToolWindow toolWindow = manager.getToolWindow("Puppet");
             if (toolWindow == null) {
-                toolWindow = manager.registerToolWindow("Puppet", true, ToolWindowAnchor.BOTTOM);
+                throw new ExecutionException("The Puppet tool window is not registered.");
             }
             toolWindow.getContentManager().removeAllContents(true);
             var content = toolWindow.getContentManager().getFactory()

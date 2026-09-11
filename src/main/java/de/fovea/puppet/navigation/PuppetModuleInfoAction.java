@@ -2,6 +2,7 @@ package de.fovea.puppet.navigation;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ public final class PuppetModuleInfoAction extends AnAction {
         VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
         if (project == null) return;
         VirtualFile dir = file != null && !file.isDirectory() ? file.getParent() : file;
-        if (dir == null && project.getBaseDir() != null) dir = project.getBaseDir();
+        if (dir == null) dir = ProjectUtil.guessProjectDir(project);
         VirtualFile module = findModuleRoot(dir);
         if (module == null) {
             Messages.showInfoMessage(project, "No parent directory containing metadata.json was found.", "Puppet Module");

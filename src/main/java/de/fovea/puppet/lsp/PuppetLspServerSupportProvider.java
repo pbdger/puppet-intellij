@@ -9,7 +9,7 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider;
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor;
 import de.fovea.puppet.project.PuppetProjectUtil;
 import de.fovea.puppet.settings.PuppetSettingsState;
-import de.fovea.puppet.tools.PuppetToolResolver;
+import de.fovea.puppet.runtime.PuppetRuntimeResolver;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -47,39 +47,30 @@ public final class PuppetLspServerSupportProvider implements LspServerSupportPro
         @Override
         public @NotNull GeneralCommandLine createCommandLine() {
             var settings = ApplicationManager.getApplication().getService(PuppetSettingsState.class).data();
-            String server = PuppetToolResolver.languageServer(settings);
-            if (server == null) {
+            var runtime = PuppetRuntimeResolver.resolve(settings);
+            if (runtime == null || runtime.languageServer() == null) {
                 throw new IllegalStateException(
-                        "puppet-languageserver was not found. Configure it under Settings | Tools | Puppet.");
-            }
-
-            GeneralCommandLine command;
-            if (server.toLowerCase().endsWith(".rb")) {
-                String ruby = PuppetToolResolver.ruby(settings);
-                if (ruby == null) {
-                    throw new IllegalStateException(
-                            "Ruby was not found, but the configured Puppet language server is a Ruby script.");
-                }
-                command = new GeneralCommandLine(ruby, server, "--stdio", "--timeout=0");
-            } else {
-                command = new GeneralCommandLine(server, "--stdio", "--timeout=0");
+                        "No usable PDK or Puppet Agent runtime was found. Check Settings | Tools | Puppet.");
             }
 
             Path workspace = PuppetProjectUtil.findWorkspaceRoot(project, contextFile);
+            java.util.List<String> arguments = new java.util.ArrayList<>(java.util.List.of("--stdio", "--timeout=0"));
             if (workspace != null) {
-                command.addParameter("--local-workspace=" + workspace);
-                command.setWorkDirectory(workspace.toFile());
+                arguments.add("--local-workspace=" + workspace);
             }
 
             String puppetSettings = PuppetProjectUtil.editorServicesPuppetSettings(settings);
             if (puppetSettings != null) {
-                command.addParameter("--puppet-settings=" + puppetSettings);
+                arguments.add("--puppet-settings=" + puppetSettings);
             }
             if (settings.lspDebugLogFile != null && !settings.lspDebugLogFile.isBlank()) {
-                command.addParameter("--debug=" + settings.lspDebugLogFile.trim());
+                arguments.add("--debug=" + settings.lspDebugLogFile.trim());
             }
 
-            LOG.info("Starting Puppet language server: " + server);
+            GeneralCommandLine command = runtime.languageServer().commandLine(arguments, workspace);
+
+            LOG.info("Starting Puppet language server with runtime: " + runtime.description());
+            LOG.info("Puppet language server command: " + runtime.languageServer().display());
             LOG.info("Puppet LSP workspace: " + (workspace == null ? "<none>" : workspace));
             if (puppetSettings != null) LOG.info("Puppet LSP custom Puppet settings enabled");
             if (settings.lspDebugLogFile != null && !settings.lspDebugLogFile.isBlank()) {
