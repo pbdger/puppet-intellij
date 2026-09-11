@@ -7,3 +7,5 @@
 /gradle/wrapper/gradle-wrapper.properties
 /buildSrc/
 .idea/*
+.idea
+_DS_*
