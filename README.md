@@ -74,10 +74,9 @@ Select the ZIP produced in `build/distributions/`.
 
 The 1.0.3 production sources compile against IntelliJ IDEA Ultimate 2025.1.
 `verifyPluginProjectConfiguration`, `buildPlugin`, and `verifyPluginStructure`
-complete successfully. The existing six-test suite compiles; two lexer tests pass,
-while four pre-existing parser/index fixture tests still fail and require separate
-follow-up work. A full multi-IDE Plugin Verifier run has not been claimed for this
-source snapshot.
+complete successfully. All six lexer, parser, and declaration-index tests pass in
+the IntelliJ test runtime. A full multi-IDE Plugin Verifier run has not been claimed
+for this source snapshot.
 
 ## 1.0.3 Structure View compatibility
 
@@ -91,6 +90,12 @@ This patch release fixes the IntelliJ 2025 compile errors in
 - registers the implementation with `lang.psiStructureViewFactory`.
 - declares JUnit 4 explicitly for the existing `TestCase` and
   `BasePlatformTestCase` test suite.
+- removes the unavailable `com.intellij.modules.lsp` dependency from the IntelliJ
+  2025 descriptor. The LSP API is supplied by IDEA Ultimate 2025; requiring the
+  nonexistent module prevented the plugin, file type, parser, and index extensions
+  from loading in fixture tests.
+- declares `language="Puppet"` on the custom file type, as required for consistent
+  language/file-type registration in the IntelliJ 2025 test runtime.
 
 These changes address the Structure View compile failures reported by the first
 real IntelliJ 2025 CI test run.

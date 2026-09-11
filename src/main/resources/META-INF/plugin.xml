@@ -8,11 +8,11 @@
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.lsp</depends>
     <depends>com.intellij.modules.ultimate</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Puppet"
+                  language="Puppet"
                   implementationClass="de.consoluta.puppet.language.PuppetFileType"
                   fieldName="INSTANCE"
                   extensions="pp;epp"

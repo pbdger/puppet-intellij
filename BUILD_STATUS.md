@@ -5,12 +5,9 @@ Target: IntelliJ IDEA Ultimate 2025.1–2025.3, Java 21.
 This source tree includes Gradle configuration for IntelliJ Platform verification
 and CI. With JBR 21 and the IntelliJ IDEA Ultimate 2025.1 SDK, `compileJava`,
 `compileTestJava`, `verifyPluginProjectConfiguration`, `buildPlugin`, and
-`verifyPluginStructure` complete successfully.
-
-The full six-test suite runs in headless mode. The two lexer tests pass; four
-pre-existing parser/index fixture tests fail. These failures are separate from the
-1.0.3 Structure View compile correction and remain follow-up work. A full multi-IDE
-Plugin Verifier run has not been completed for this snapshot.
+`verifyPluginStructure` complete successfully. All six lexer, parser, and
+declaration-index tests pass in headless mode. A full multi-IDE Plugin Verifier run
+has not been completed for this snapshot.
 
 Recommended verification:
 
@@ -26,7 +23,11 @@ The IntelliJ 2025 Structure View compile errors reported by CI have been correct
 - `PsiElement` navigation is guarded through `com.intellij.pom.Navigatable`;
 - the Structure View uses the matching `lang.psiStructureViewFactory` extension
   point;
-- JUnit 4 is declared explicitly for the existing IntelliJ fixture tests.
+- JUnit 4 is declared explicitly for the existing IntelliJ fixture tests;
+- the unavailable `com.intellij.modules.lsp` dependency is removed for IntelliJ
+  2025 so the Puppet plugin can load during fixture tests. IDEA Ultimate supplies
+  the 2025 LSP API used by the plugin;
+- the file type explicitly declares `language="Puppet"` for IntelliJ 2025.
 
 Static project, XML, registered-class and archive checks pass for this source
 snapshot. Gradle also reports two non-fatal configuration warnings: the intentional

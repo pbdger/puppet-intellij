@@ -52,6 +52,8 @@ intellijPlatform {
               <li>Navigates structure symbols safely through the Navigatable interface.</li>
               <li>Registers the Structure View with the matching psiStructureViewFactory extension point.</li>
               <li>Adds the JUnit 4 test dependency required by the existing fixture tests.</li>
+              <li>Removes the unavailable com.intellij.modules.lsp dependency for IntelliJ 2025.</li>
+              <li>Declares the Puppet language explicitly on the custom file type.</li>
             </ul>
         """.trimIndent()
     }
