@@ -4201,3 +4201,7 @@
 /build/tmp/test/jar_extract_15011248263303979007_tmp
 /build/tmp/test/jar_extract_16869260411231432754_tmp
 /build/tmp/test/jar_extract_17033464133503288620_tmp
+/gradlew
+/gradlew.bat
+/gradle/wrapper/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.properties
